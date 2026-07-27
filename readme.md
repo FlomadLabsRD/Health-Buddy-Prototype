@@ -1,4 +1,6 @@
-# Handoff: FloHealth Buddy — Mobile MVP
+# Coach Dashboard MVP — FloHealth Buddy
+
+> **Repository status:** This repo currently contains the **front-end only** for the Coach Dashboard MVP. Everything here is client-side: UI, layout, interaction behavior, and browser-local data. **The back end will be integrated soon** — API, database, authentication, and real AI services are not part of this commit. See **Back end — not yet integrated** below for exactly what is stubbed and what the server will need to provide.
 
 ## Overview
 FloHealth Buddy is a mobile health application with **two distinct user modes** sharing one shell:
@@ -9,6 +11,24 @@ FloHealth Buddy is a mobile health application with **two distinct user modes** 
 On first launch a splash screen asks the user to choose a **primary role**; the app then opens to that dashboard. The choice persists and the user can switch modes anytime from the header's 3-dot menu.
 
 The signature feature of this build is the **field view + play recording + positional insights** loop: a coach arranges players on a field diagram, records that arrangement at a game timestamp, and the app derives pattern insights from the accumulated position data (deliberately distinct from box-score statistics, which live on the score sheets).
+
+## Back end — not yet integrated
+The front end is complete and interactive, but every data operation is currently local to the device. When the back end lands it will need to cover:
+
+| Area | Today (front-end only) | Needed from the back end |
+| --- | --- | --- |
+| Auth &amp; accounts | None — no sign-in | User accounts, sessions, role (personal / coach) |
+| Persistence | `localStorage` only, wiped by clearing the browser | Server-side storage for all records below |
+| Roster &amp; teams | Sample athletes hardcoded | Team + athlete CRUD, multi-team per coach |
+| Plays &amp; positions | `flo_plays_&lt;sport&gt;`, capped at 30 per sport, device-local | Durable play history, season-long, multi-device |
+| Attendance &amp; check-ins | Component state, lost on reload | Persisted per athlete per date |
+| Score sheets | Editable in-session only | Saved game records |
+| Analytics | Computed in the browser from local plays | Server-side aggregation across full history |
+| AI (Coach AI, drills, insights) | Static fixtures and keyword matching | Real model integration |
+| Media &amp; records | Upload UI only, nothing stored | File storage |
+| Devices &amp; sync | “Coming soon” placeholder | Wearable integrations |
+
+The play record shape documented under **State Management** is the intended contract — it is the schema the API should mirror.
 
 ## About the Design Files
 The file in this bundle (`FloHealth Mobile MVP.html`) is a **design reference created in HTML** — a working prototype demonstrating the intended look, layout, and behavior. **It is not production code to copy directly.**
@@ -212,7 +232,13 @@ Family: **Inter** (300/400/500/600/700 from Google Fonts), fallback `system-ui, 
 - All other iconography is inline SVG (`NavIcon`, `CheckIcon`) or emoji used as category glyphs. Replace emoji with the codebase's real icon set where one exists.
 
 ## Files
+This repo currently holds the front-end deliverable:
+
 - `FloHealth Mobile MVP.html` — the complete prototype (all screens, both modes). Single file: `<style>` block near the top holds tokens and shared classes; component functions follow in one `<script type="text/babel">`.
+- `assets/flobrain-hand.png` — brand mark used on the splash screen.
+- `README.md` — this document.
+
+Server code, API definitions, and database schema will be added when the back end is integrated.
 
 Useful entry points when reading the source (search by function name):
 `RoleSplash` · `App` · `HomeTab` · `SchedulerTab` · `CommunityTab` · `RecordsTab` · `CDash` · `FieldDiagram` (+ module-level `FORMATIONS`, `UNIT_LABELS`) · `SportScoresheet` · `CAths` · `CCal` · `CStats` · `PlayAnalytics` · `PositionalInsights` (+ `INSIGHT_LIB`, `INSIGHT_CATS`, `TEAM_OPTS`) · `HealthAIPanel` (+ `DRILL_LIB`) · `CreateTeamModal` · `TodayAttendance` · `StopwatchModal` · `DeviceMenu` · `UserProfileModal` · `AddDeviceModal` · `DeviceSettingsModal`
@@ -226,4 +252,4 @@ Useful entry points when reading the source (search by function name):
 6. **Opponent dots default to position codes** because there's no opposing roster; the coach can tap to enter initials or jersey numbers.
 7. **Custom Sport teams** (`CreateTeamModal`) let a coach define their own categories and score-sheet metrics — the schema is dynamic, so design the data model for user-defined metrics from the start.
 8. **Session filter is not yet wired to play records** — Game/Practice is currently a framing label; if it should filter, add a session field to the play record at capture time.
-9. **No auth, no backend, no real AI.** Chat replies, drills, and most insights are keyword-matched or static fixtures.
+9. **No auth, no backend, no real AI.** Chat replies, drills, and most insights are keyword-matched or static fixtures. This is the front-end MVP — back-end integration is the next milestone (see **Back end — not yet integrated** at the top).
